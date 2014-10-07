@@ -1,0 +1,166 @@
+<!doctype html>
+<html>
+<head>
+	<title>Brainstorms - Inicio</title>
+	<meta charset="utf-8">
+	<link rel="stylesheet" type="text/css" href="dist/css/bootstrap.min.css">
+	<script type="text/javascript" src="dist/jquery/jquery-2.1.1.min.js"></script>
+	<script type="text/javascript" src="dist/js/bootstrap.min.js"></script>
+	<link rel="stylesheet" type="text/css" href="st.css">
+</head>
+<body>
+	<nav class="navbar navbar-inverse navbar-static-top" role="navigation">
+		<div class="container">
+			<div class="navbar-header">
+				<li href="index.html" class="navbar-brand">Brainstorms</li>
+			</div>
+			<div class="">
+				<ul class="nav navbar-nav">
+					<li class="botoncito">
+						<button type="button" class="btn btn-primary disabled">
+							<span class="glyphicon glyphicon-globe"></span>
+							<!--<span class="sr-only">Ver grupos</span>-->
+						</button>
+					</li>
+					<li class="botoncito">
+						<button type="button" id="borrarTodo" class="btn btn-danger">
+							<span class="glyphicon glyphicon-minus"></span>
+							<!--<span class="sr-only">Ver grupos</span>-->
+						</button>
+					</li>
+				</ul>
+				<ul class="nav navbar-nav navbar-right">
+					<li class="botoncito">
+						<button type="button" id="btn-nuevo" class="btn btn-success">
+							<span class="glyphicon glyphicon-plus"></span>
+							<!--<span class="sr-only">Nueva idea</span>-->
+						</button>
+					</li>
+					<li></li>
+				</ul>
+			</div>
+		</div>
+	</nav>
+	<div class="nuevo">
+		<div class="container">
+			<h2>Describa su nueva idea</h2>
+			<form role="form" method="post" action="">
+				<div class="form-group">
+					<label for="idea">Idea</label>
+					<textarea class="form-control" id="idea" style="resize:vertical;"></textarea>
+				</div>
+				<div class="form-group">
+					<input type="button" class="btn btn-primary" id="guardarIdea" name="guardarIdea" value="Guardar">
+				</div>
+			</form>
+		</div>
+	</div>
+	<div class="muro-ideas">
+		<div class="container">
+			<h1>Tus últimas ideas</h1>
+			<div class="muro">
+				<!-- Texto usado para maquetar
+				<div class="idea">
+					<blockquote>
+						<p>Anda a saber si fue tu culpa o fue mi culpa, se acabaron las preguntas.</p>
+						<footer>
+							Escrito el: 10/09/2014 15:32pm
+						</footer>
+					</blockquote>
+				</div>
+				<div class="idea">
+					<blockquote>
+						<p>Que inutil que es mirar el reloj.</p>
+						<footer>
+							Escrito el: 10/09/2014 12:43pm
+						</footer>
+					</blockquote>
+				</div>
+				<div class="idea">
+					<blockquote>
+						<p>Rutina insoportable de pensar el final, es solo alguien que saluda y que camina.</p>
+						<footer>
+							Escrito el: 10/09/2014 08:57am
+						</footer>
+					</blockquote>
+				</div>
+			-->
+			</div>
+		</div>
+	</div>
+	<div class="footer">
+		<p>Creado por Pablo Raissiguier @ Estudio Galt</p>
+		<img src="http://estudiogalt.com/wp-content/themes/nebula/images/galt-logo-footer-desarrollo-web.png" alt="Logo Estudio Galt" title="Logo Estudio Galt" >
+	</div>
+	<script type="text/javascript">
+		var mostrar = false;
+		$('.nuevo').attr('hidden','hidden');
+		$('#btn-nuevo').click(function() {
+			if(!mostrar) {
+				//$('.nuevo').removeAttr('hidden');
+				$('.nuevo').toggle('1000','swing',function() {
+					$('#btn-nuevo').addClass('btn-danger');
+					$('#btn-nuevo').removeClass('btn-success');
+					$('#btn-nuevo>span').addClass('glyphicon-minus');
+					$('#btn-nuevo>span').removeClass('glyphicon-plus');
+				});
+				mostrar = true;
+			} else {
+				//$('.nuevo').attr('hidden','hidden');
+				$('.nuevo').toggle('1000','swing',function() {
+					$('#btn-nuevo').addClass('btn-success');
+					$('#btn-nuevo').removeClass('btn-danger');
+					$('#btn-nuevo>span').addClass('glyphicon-plus');
+					$('#btn-nuevo>span').removeClass('glyphicon-minus');
+				});
+				mostrar = false;
+			}
+		});
+
+		var brs = localStorage.getItem("brs");
+		brs = JSON.parse(brs);
+		if(brs == null) {
+			brs = [];
+		} else {
+			mostrarIdeas();
+		}
+
+		$('#guardarIdea').click(function() {
+			var texto = $('#idea').val();
+			var f = new Date();
+			var nueva = JSON.stringify({
+				idea : texto,
+				fecha : f.toString()
+			});
+			brs.push(nueva);
+			localStorage.setItem("brs", JSON.stringify(brs));
+			mostrarIdeas();
+		});
+
+		function mostrarIdeas() {
+			borrarTodas();
+			for(var i in brs) {
+				var idea = JSON.parse(brs[i]);
+				d = document.createElement('div');
+				b = document.createElement('blockquote');
+				f = document.createElement('footer');
+				$(d).addClass('idea');
+				$(f).html(idea.fecha);
+				$(b).html(idea.idea);
+				$(b).append($(f));
+				$(b).appendTo($(d));
+				$('.muro').prepend($(d));
+			}
+		}
+
+		function borrarTodas() {
+			$('.muro').empty();
+		}
+
+		$('#borrarTodo').click(function() {
+			localStorage.removeItem("brs");
+			mostrarIdeas();
+		});
+	</script>
+</body>
+</html>
